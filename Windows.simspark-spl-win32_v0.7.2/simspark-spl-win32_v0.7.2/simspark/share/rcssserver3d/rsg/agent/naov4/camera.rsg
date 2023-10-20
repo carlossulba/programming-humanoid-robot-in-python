@@ -1,0 +1,28 @@
+; -*- mode: lisp; -*-
+
+(RSG 0 1)
+(
+    (templ $name)
+
+    (nd RestrictedVisionPerceptor
+        (setPredicateName $name)
+        (setViewCones 60.9 47.6)
+        (setSenseMyPos false)
+        (setSenseBallPos false)
+        (setStaticSenseAxis false)
+        (addNoise true)
+        (setInterval 3)
+        (setSenseLine true)
+        (setSenseLineName true)
+        )
+        
+    ;(nd ImagePerceptor
+    ;    (setPredicateName $name)
+	; 	(setInterval 30)
+	; 	(setOffScreen true)
+	; 	(setResolution 320 240)
+	; 	(setFOV 58)
+	; 	(setZNear 0.003)
+	; 	(setZFar 50)
+	; 	)
+)
