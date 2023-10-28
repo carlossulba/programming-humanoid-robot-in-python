@@ -2,7 +2,7 @@
 
 * Tasks:
     1. complete the code in `AngleInterpolationAgent.angle_interpolation`,
-       you are free to use splines interploation or Bezier interploation,
+       you are free to what is meant with angle interp splines interploation or Bezier interploation,
        but the keyframes provided are for Bezier curves, you can simply ignore some data for splines interploation,
        please refer data format below for details.
     2. try different keyframes from `keyframes` folder
@@ -42,6 +42,7 @@ class AngleInterpolationAgent(PIDAgent):
     def angle_interpolation(self, keyframes, perception):
         target_joints = {}
         # YOUR CODE HERE
+
 
         return target_joints
 
