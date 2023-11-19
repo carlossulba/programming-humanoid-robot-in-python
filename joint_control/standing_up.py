@@ -5,8 +5,8 @@
 
 '''
 
-
 from recognize_posture import PostureRecognitionAgent
+from keyframes import leftBackToStand, leftBellyToStand, rightBackToStand, rightBellyToStand, wipe_forehead, hello
 
 
 class StandingUpAgent(PostureRecognitionAgent):
@@ -17,11 +17,17 @@ class StandingUpAgent(PostureRecognitionAgent):
     def standing_up(self):
         posture = self.posture
         # YOUR CODE HERE
+        if self.keyframes == ([], [], []):
+            if posture == 'Back':
+                self.keyframes = leftBackToStand()
+            elif posture == 'Belly':
+                self.keyframes = leftBellyToStand()
 
 
 class TestStandingUpAgent(StandingUpAgent):
     '''this agent turns off all motor to falls down in fixed cycles
     '''
+
     def __init__(self, simspark_ip='localhost',
                  simspark_port=3100,
                  teamname='DAInamite',
@@ -29,7 +35,7 @@ class TestStandingUpAgent(StandingUpAgent):
                  sync_mode=True):
         super(TestStandingUpAgent, self).__init__(simspark_ip, simspark_port, teamname, player_id, sync_mode)
         self.stiffness_on_off_time = 0
-        self.stiffness_on_cycle = 10  # in seconds
+        self.stiffness_on_cycle = 20  # in seconds
         self.stiffness_off_cycle = 3  # in seconds
 
     def think(self, perception):
@@ -37,6 +43,7 @@ class TestStandingUpAgent(StandingUpAgent):
         time_now = perception.time
         if time_now - self.stiffness_on_off_time < self.stiffness_off_cycle:
             action.stiffness = {j: 0 for j in self.joint_names}  # turn off joints
+            # self.keyframes = ([], [], [])
         else:
             action.stiffness = {j: 1 for j in self.joint_names}  # turn on joints
         if time_now - self.stiffness_on_off_time > self.stiffness_on_cycle + self.stiffness_off_cycle:

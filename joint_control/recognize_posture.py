@@ -10,7 +10,7 @@
 '''
 
 from angle_interpolation import AngleInterpolationAgent
-from keyframes import hello
+from keyframes import hello, leftBackToStand, leftBellyToStand, rightBackToStand, rightBellyToStand, wipe_forehead
 from joblib import load
 
 
@@ -30,8 +30,8 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
 
     def recognize_posture(self, perception):
         posture = 'unknown'
-        # YOUR CODE HERE
-        # the features are['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'RHipYawPitch', 'RHipRoll', 'RHipPitch', 'RKneePitch', 'AngleX', 'AngleY']
+        # YOUR CODE HERE the features are['LHipYawPitch', 'LHipRoll', 'LHipPitch', 'LKneePitch', 'RHipYawPitch',
+        # 'RHipRoll', 'RHipPitch', 'RKneePitch', 'AngleX', 'AngleY']
         current_state = [
             [perception.joint.get('LHipYawPitch'), perception.joint.get('LHipRoll'), perception.joint.get('LHipPitch'),
              perception.joint.get('LKneePitch'), perception.joint.get('RHipYawPitch'), perception.joint.get('RHipRoll'),
@@ -39,35 +39,24 @@ class PostureRecognitionAgent(AngleInterpolationAgent):
              perception.imu[1]]]
         posture = self.posture_classifier.predict(current_state)
 
-        # postures = {
-        #     0: 'Back',
-        #     1: 'Belly',
-        #     2: 'Crouch',
-        #     3: 'Frog',
-        #     4: 'HeadBack',
-        #     5: 'Knee',
-        #     6: 'Left',
-        #     7: 'Right',
-        #     8: 'Sit',
-        #     9: 'Stand',
-        #     10: 'StandInit'
-        # }
+        postures = {
+            0: 'Back',
+            1: 'Belly',
+            2: 'Crouch',
+            3: 'Frog',
+            4: 'HeadBack',
+            5: 'Knee',
+            6: 'Left',
+            7: 'Right',
+            8: 'Sit',
+            9: 'Stand',
+            10: 'StandInit'
+        }
         # print(postures[posture[0]])
-        return posture
+        return postures[posture[0]]
 
-
-from keyframes import leftBackToStand
-from keyframes import leftBellyToStand
-from keyframes import rightBackToStand
-from keyframes import rightBellyToStand
-from keyframes import wipe_forehead
 
 if __name__ == '__main__':
     agent = PostureRecognitionAgent()
-    agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
-    # agent.keyframes = leftBackToStand()
-    # agent.keyframes = leftBellyToStand()
-    # agent.keyframes = rightBackToStand()
-    # agent.keyframes = rightBellyToStand()
-    # agent.keyframes = wipe_forehead()
+    agent.keyframes = leftBackToStand()  # CHANGE DIFFERENT KEYFRAMES
     agent.run()

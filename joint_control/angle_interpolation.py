@@ -18,11 +18,10 @@
     # to the angle and time of the point. The first Bezier param describes the handle that controls the curve
     # preceding the point, the second describes the curve following the point.
 '''
+import sys
 
 from pid import PIDAgent
-from keyframes import hello
-
-
+from keyframes import hello, leftBackToStand, leftBellyToStand, rightBackToStand, rightBellyToStand, wipe_forehead
 
 
 def calc_bezier(t, p0, p1, p2, p3):
@@ -43,6 +42,8 @@ class AngleInterpolationAgent(PIDAgent):
         super(AngleInterpolationAgent, self).__init__(simspark_ip, simspark_port, teamname, player_id, sync_mode)
         self.keyframes = ([], [], [])
         self.born_time = self.perception.time
+        self.control = -1
+        self.max_time = -1
 
     def think(self, perception):
         target_joints = self.angle_interpolation(self.keyframes, perception)
@@ -51,17 +52,25 @@ class AngleInterpolationAgent(PIDAgent):
 
     def angle_interpolation(self, keyframes, perception):
         target_joints = {}
-        current_time = perception.time - self.born_time
 
-        # if current_time > 6:
-        #     self.born_time = self.perception.time
-        #     self.keyframes = hello()
+        if self.keyframes == ([], [], []):
+            return target_joints
+
+        if self.control == -1:
+            self.control = 1
+            self.born_time = self.perception.time
+            self.max_time = -1
+
+        current_time = perception.time - self.born_time
 
         names, times, keys = keyframes
 
         for i, name in enumerate(names):
             # Find the correct time interval
             for j in range(len(times[i]) - 1):
+                if times[i][-1] > self.max_time:
+                    self.max_time = times[i][-1]
+
                 if times[i][j] <= current_time <= times[i][j + 1]:
                     # Calculate Bezier control points
                     p0 = keys[i][j][0]
@@ -89,21 +98,14 @@ class AngleInterpolationAgent(PIDAgent):
         if 'LHipYawPitch' in target_joints:
             target_joints['RHipYawPitch'] = target_joints['LHipYawPitch']
 
+        if current_time > self.max_time:
+            self.keyframes = ([], [], [])
+            self.control = -1
+
         return target_joints
 
-# from keyframes import leftBackToStand
-# from keyframes import leftBellyToStand
-# from keyframes import rightBackToStand
-# from keyframes import rightBellyToStand
-# from keyframes import wipe_forehead
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
     agent.keyframes = hello()  # CHANGE DIFFERENT KEYFRAMES
-    # agent.keyframes = leftBackToStand()
-    # agent.keyframes = leftBellyToStand()
-    # agent.keyframes = rightBackToStand()
-    # agent.keyframes = rightBellyToStand()
-    # agent.keyframes = wipe_forehead()
     agent.run()
-
